@@ -1,0 +1,323 @@
+CREATE DATABASE IF NOT EXISTS `prolike`
+DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `prolike`;
+
+CREATE TABLE IF NOT EXISTS 	`users` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`name` VARCHAR(40) NOT NULL,
+`surname` VARCHAR(40),
+`nick` VARCHAR(40),
+`sex` TINYINT,
+`birthday` DATE,
+`email` VARCHAR(40) NOT NULL,
+`country_id` INT,
+`city_id` INT
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `users`
+ADD COLUMN `photo_id` INT AFTER `nick`;
+
+ALTER TABLE `users`
+ADD COLUMN `resume` VARCHAR(150) AFTER `nick`;
+
+
+CREATE TABLE IF NOT EXISTS 	`sex` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`sex` VARCHAR(15) NOT NULL
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS 	`country` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`country` VARCHAR(40) NOT NULL
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS 	`city` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`city` VARCHAR(40) NOT NULL,
+`country_id` INT
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS 	`activity` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`initiator_id` INT NOT NULL,
+`user_id` INT NOT NULL,
+`type_id` INT NOT NULL,
+`clause_id` INT NOT NULL
+
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `activity`
+ADD COLUMN `object_id` INT NOT NULL AFTER `clause_id`;
+
+CREATE TABLE IF NOT EXISTS 	`liketype` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`liketype` VARCHAR(20) NOT NULL
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS 	`clause` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`clause` VARCHAR(30) NOT NULL
+
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS 	`foto` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`name` VARCHAR(45) NOT NULL,
+`size` INT,
+`date` DATETIME
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `foto`
+ADD COLUMN `author_id` INT NOT NULL AFTER `id`;
+
+ALTER TABLE `foto`
+ADD COLUMN `sign` VARCHAR(100) AFTER `date`;
+
+CREATE TABLE IF NOT EXISTS 	`video` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`name` VARCHAR(45) NOT NULL,
+`size` INT,
+`date` DATETIME
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `video`
+ADD COLUMN `author_id` INT NOT NULL AFTER `id`;
+
+ALTER TABLE `video`
+ADD COLUMN `sign` VARCHAR(100) AFTER `date`;
+
+CREATE TABLE IF NOT EXISTS 	`comments` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`author_id` INT NOT NULL,
+`clause_id` INT NOT NULL,
+`object_id` INT NOT NULL,
+`text` VARCHAR(300),
+`date` DATETIME NOT NULL,
+`rating` INT
+) DEFAULT CHAR SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+
+ALTER TABLE `users` 
+ADD CONSTRAINT `cntry` FOREIGN KEY (`country_id`)
+REFERENCES `country`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ADD CONSTRAINT `cntry` FOREIGN KEY (`country_id`)
+REFERENCES `country`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `users` 
+ADD CONSTRAINT `fid` FOREIGN KEY (`photo_id`)
+REFERENCES `foto`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `city` 
+ADD CONSTRAINT `countries` FOREIGN KEY (`country_id`)
+REFERENCES `country`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `activity` 
+ADD CONSTRAINT `initiator` FOREIGN KEY (`initiator_id`)
+REFERENCES `users`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `activity` 
+ADD CONSTRAINT `user` FOREIGN KEY (`user_id`)
+REFERENCES `users`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `activity` 
+ADD CONSTRAINT `what` FOREIGN KEY (`clause_id`)
+REFERENCES `clause`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `activity` 
+ADD CONSTRAINT `what` FOREIGN KEY (`clause_id`)
+REFERENCES `clause`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `comments` 
+ADD CONSTRAINT `user_k` FOREIGN KEY (`author_id`)
+REFERENCES `users`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `foto` 
+ADD CONSTRAINT `person` FOREIGN KEY (`author_id`)
+REFERENCES `users`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE `video` 
+ADD CONSTRAINT `person1` FOREIGN KEY (`author_id`)
+REFERENCES `users`(`id`)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+
+
+INSERT INTO `sex`
+(`sex`) VALUES
+('Male'),
+('Female'),
+('Transgender'),
+('NA');
+
+
+
+
+INSERT INTO `country`
+(`country`) VALUES
+('Russia'),
+('Australia'),
+('Argentina'),
+('Bahamas'),
+('Belgium'),
+('Brazil'),
+('Vatican City'),
+('Guadelupe'),
+('Greece'),
+('Italy'),
+('Spain'),
+('Ireland'),
+('Costa Rica'),
+('Madagascar'),
+('New Zealand'),
+('Japan');
+
+
+
+INSERT INTO `city`
+(`city`, `country_id`) VALUES
+('Moscow', 1),
+('St.Petersburg', 1),
+('Canberra', 2),
+('Melbourne', 2),
+('Sydney', 2),
+('Cordova', 3),
+('Haccay', 4),
+('Freeport', 4),
+('George Town', 4),
+('Brussel', 5),
+('Waterloo', 5),
+('Halle', 5),
+('Vatican', 7),
+('Formosa', 6),
+('Brazil', 6),
+('San Paulu', 6),
+('Port-Louis', 8),
+('Grand-Bourg', 8),
+('Sainte-Rose', 8),
+('Amfissa', 9),
+('Delfi', 9),
+('Makrakomi', 9),
+('Basse-Terre', 8);
+
+
+
+INSERT INTO `clause`
+(`clause`) VALUES
+('profile'),
+('foto'),
+('comment'),
+('video'),
+('comment2comment');
+
+Liketype:
+
+1like2dislike3spam4remove like5remove dislike6remove spam
+
+
+
+INSERT INTO `users`
+(`name`, `email`, `sex`, `country_id`, `city_id`) VALUES
+('Ethan', 'ethh@bbc.com', 1, 6, 15),
+('Eugene', 'john@best.it', 1, 4, 7),
+('Maria', 'mia@ya.com', 2, 2, 3),
+('Harry', 'hot@mail.fr', 1, 5, 11),
+('Dany', 'dan@google.br', 1, 6, 15),
+('Olivia', 'ollii@google.com', 2, 4, 9);
+INSERT INTO `users`
+(`name`, `surname`, `nick`, `email`, `sex`, `country_id`, `city_id`) VALUES
+('Emma', 'Moon', 'Moon', 'em@bbc.com', 2, 6, 16),
+('John', 'Brown', 'Jo', 'joB@best.it', 1, 2, 5),
+('Chloe', 'McClone', 'clone', 'mcc@ya.com', 2, 2, 4),
+('Jacob', 'Monarch', 'Jaco', 'jaco@mail.fr', 3, 8, 17),
+('Mattew', 'Horn', 'Mot', 'mt@google.br', 1, 6, 14),
+('Olivia', 'Look', 'Loli', 'ol44@google.com', 4, 5, 12);
+
+
+INSERT INTO `foto` (`author_id`, `name`, `size`, `date`) VALUES
+(1, 'foto1', 300, CURDATE()),
+(2, '1foto1', 300, CURDATE()),
+(4, 'foto1', 300, CURDATE()),
+(3, 'foto2', 400, CURDATE()),
+(16, 'foto1', 300, CURDATE()),
+(14, 'fotka', 300, CURDATE()),
+(17, 'fot', 300, CURDATE()),
+(3, 'foto2', 400, CURDATE()),
+(6, 'best', 600, CURDATE()),
+(7, 'foto1', 300, CURDATE()),
+(11, 'file', 500, CURDATE()),
+(13, 'foto2', 400, CURDATE()),
+(10, 'pr0file', 300, CURDATE()),
+(12, 'fotos', 300, CURDATE()),
+(1, 'foto1', 300, CURDATE()),
+(3, 'foto2', 400, CURDATE());
+
+
+
+INSERT INTO `video` (`author_id`, `name`, `size`, `date`) VALUES
+(5, 'vid1', 1300, CURDATE()),
+(7, '1foto1', 2300, CURDATE()),
+(4, 'vid', 1300, CURDATE()),
+(8, 'foto2', 400, CURDATE()),
+(6, 'foto1', 300, CURDATE()),
+(4, 'fotka', 300, CURDATE()),
+(7, 'fot', 3300, CURDATE()),
+(13, 'vido2', 1400, CURDATE()),
+(16, 'best', 600, CURDATE()),
+(17, 'foto1', 600, CURDATE()),
+(4, 'file', 500, CURDATE()),
+(3, 'vido2', 400, CURDATE()),
+(17, 'pr0file', 2300, CURDATE()),
+(2, 'fotos', 300, CURDATE()),
+(15, 'vido1', 1300, CURDATE()),
+(13, 'vido2', 400, CURDATE());
+
+INSERT INTO `comments` (`author_id`, `clause_id`, `object_id`, `date`, `text`) VALUES
+(5, 1, 7, CURDATE(), 'nice'),
+(2, 4, 4, CURDATE(), 'cool'),
+(11, 2, 6, CURDATE(), 'the best!'),
+(8, 3, 1, CURDATE(), 'absolutely!'),
+(5, 1, 11, CURDATE(), 'nice'),
+(2, 4, 1, CURDATE(), 'cool'),
+(11, 2, 6, CURDATE(), 'the best!'),
+(6, 3, 2, CURDATE(), 'absolutely!'),
+(15, 1, 3, CURDATE(), 'nice'),
+(2, 4, 5, CURDATE(), 'cool'),
+(11, 2, 6, CURDATE(), 'the best!'),
+(11, 3, 3, CURDATE(), 'absolutely!'),
+(7, 2, 2, CURDATE(), 'wow!'),
+(7, 2, 3, CURDATE(), 'wow!'),
+(7, 2, 4, CURDATE(), 'wow!'),
+(7, 2, 5, CURDATE(), 'wow!'),
+(7, 2, 6, CURDATE(), 'wow!'),
+(7, 2, 7, CURDATE(), 'wow!'),
+(7, 2, 8, CURDATE(), 'wow!'),
+(7, 2, 9, CURDATE(), 'wow!'),
+(7, 2, 12, CURDATE(), 'yep!');
+
+
+SELECT `initiator_id`, COUNT(`type_id` ) FROM `activity` GROUP BY `initiator_id`;
+
+SELECT `user_id`, COUNT(`type_id` ) FROM `activity` GROUP BY `user_id`;
