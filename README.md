@@ -1,2 +1,3 @@
 # Q2_DB
-For Database Project
+For Different Projects
+Added some tips for work project
